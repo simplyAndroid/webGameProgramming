@@ -74,6 +74,7 @@ export default class Title extends Phaser.State {
   }
 
   private goNext(): void {
+    GameManager.Instance.currentLevelNum = 1 
     this.game.state.start('levelone')
     //this.game.state.start('intro')
   }

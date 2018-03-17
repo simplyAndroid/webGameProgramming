@@ -11,8 +11,8 @@ import {randomYPos, randomXPos} from '../../utils/gamehelpers'
 import { Sprite } from 'phaser-ce';
 
 export default class LevelTwo extends Phaser.State {
-  readonly FEEDS_CNT = 50
-  readonly TIME_LMT = 50
+  readonly FEEDS_CNT = 75
+  readonly TIME_LMT = 90
   private intervalFunc = null
   private gameResult = 'ready'//'success', 'failed'
   
@@ -51,15 +51,16 @@ export default class LevelTwo extends Phaser.State {
   private checkHardPosition(){
     for(var i =0; i<3; i++){ 
       this.game.physics.arcade.overlap(this.feed, this.tileBoards[i],() =>{
-        this.feed.scale.x = -1
-        this.feed.position.y = 500        
+        
+        this.feed.position.y = this.game.height/10 
+        this.feed.scale.x = -1       
       })
     }
-    this.game.physics.arcade.overlap(this.bgFront, this.feed, () =>{
-      this.feed.position.y = 450
-      this.feed.scale.x = -1
-      this.feed.scale.y = -1 
-    })
+    this.game.physics.arcade.overlap(this.feed, this.bgFront,() =>{
+      //console.log('Floor--2')      
+      this.feed.position.y = this.game.height/10  
+      //this.feed.scale.y = -1      
+    })   
   }
   private createFeeds(): void {
     for(var i =0; i<this.FEEDS_CNT; i++){   
@@ -128,7 +129,7 @@ export default class LevelTwo extends Phaser.State {
     this.bgFront.body.immovable = true
     this.bgFront.body.allowGravity = false
     
-    const pos = [{x:16,y:330}, {x:254,y:220}, {x:487,y:50}]
+    const pos = [{x:16,y:330}, {x:254,y:220}, {x:487,y:150}]
     for(var i =0; i<3; i++){   
       this.tileBoards[i] = this.game.add.sprite(pos[i].x, pos[i].y, this.imgTile[0].getName())
       this.game.physics.arcade.enable(this.tileBoards[i])
@@ -145,7 +146,7 @@ export default class LevelTwo extends Phaser.State {
     //this.gameAdapter.displayControls(this.game)
     //this.gameAdapter.initTimer(this.game, this.timer)    
     this.intervalFunc = setInterval(() => {  
-      GameManager.Instance.scoreValue = this.eatFeed * 10    
+      GameManager.Instance.scoreValue = 500 + this.eatFeed * 10    
       this.initTimer(this.game, this.countTick, this.TIME_LMT)
       this.countTick ++
       if(this.countTick == this.TIME_LMT){
@@ -162,7 +163,7 @@ export default class LevelTwo extends Phaser.State {
     console.log(`Wave ${this.currentWaveNumber}`)
   }
   public goNext(): void {
-    GameManager.Instance.scoreValue = this.eatFeed * 10
+    GameManager.Instance.scoreValue = 500 + this.eatFeed * 10
     this.initTimer(this.game, this.countTick, this.TIME_LMT)
     if(this.gameResult == 'success'){
       if(this.intervalFunc){
