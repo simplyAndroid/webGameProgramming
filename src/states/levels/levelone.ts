@@ -51,15 +51,16 @@ export default class LevelOne extends Phaser.State {
   private checkHardPosition(){
     for(var i =0; i<3; i++){ 
       this.game.physics.arcade.overlap(this.feed, this.tileBoards[i],() =>{
-        this.feed.scale.x = -1
-        this.feed.position.y = 500        
+        console.log('Floor--1')
+        //this.feed.scale.x = -1
+        this.feed.position.y = this.game.height/10        
       })
     }
-    this.game.physics.arcade.overlap(this.bgFront, this.feed, () =>{
-      this.feed.position.y = 450
-      this.feed.scale.x = -1
-      this.feed.scale.y = -1 
-    })
+    this.game.physics.arcade.overlap(this.feed, this.bgFront,() =>{
+      console.log('Floor--2')
+      //this.feed.scale.x = -1
+      this.feed.position.y = this.game.height/10        
+    })   
   }
   private createFeeds(): void {
     for(var i =0; i<this.FEEDS_CNT; i++){   
@@ -69,9 +70,6 @@ export default class LevelOne extends Phaser.State {
       this.feed.body.immovable = true      
       this.checkHardPosition()
       this.feed.body.allowGravity = false
-      if(i % 3){
-        this.feed.scale.y = -1
-      }
       this.feeds[i] = this.feed      
     }
   }

@@ -19,10 +19,12 @@ export function randomInRange(min: number, max: number): number {
 }
 
 export function randomYPos(height: number): number {
-  return randomInRange(50, height - 50)
+  let v = height * 0.2
+  return randomInRange(v, height - v)
 }
 export function randomXPos(width: number): number {
-  return randomInRange(50, width - 50)
+  let v = width * 0.1
+  return randomInRange(v, width - v)
 }
 /**
  * Check if sprite hits bounds

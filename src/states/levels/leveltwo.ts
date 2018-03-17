@@ -234,7 +234,7 @@ export default class LevelTwo extends Phaser.State {
 */
     if (!this.player.alive) {
       if (GameManager.Instance.getRestartKeyReady() && this.restartKey.isDown) {
-        this.game.state.start('levelone')
+        this.game.state.start('leveltwo')
       }
     }
   }

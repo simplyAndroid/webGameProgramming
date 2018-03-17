@@ -53,7 +53,14 @@ export default class Win extends Phaser.State {
       this.goNext()
     }
   }
-
+  private goNextLevel(): void {
+    if(GameManager.Instance.currentLevelNum == 1){
+      this.game.state.start('leveltwo')
+    }
+    else if(GameManager.Instance.currentLevelNum == 2){
+      this.game.state.start('title')
+    }
+  }
   private goNext(): void {
     this.game.state.start('title')
   }
