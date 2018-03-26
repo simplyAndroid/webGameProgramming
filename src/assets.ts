@@ -6,6 +6,11 @@ export namespace Images {
 
         static getPNG(): string { return require('assets/image/banana.png'); }
     }
+    export class ImageBroken {
+        static getName(): string { return 'broken'; }
+
+        static getPNG(): string { return require('assets/image/broken.png'); }
+    }
     export class ImageCarnivorousClosed {
         static getName(): string { return 'carnivorousClosed'; }
 
@@ -16,15 +21,15 @@ export namespace Images {
 
         static getPNG(): string { return require('assets/image/carnivorousOpened.png'); }
     }
-    export class ImageCityBackground {
-        static getName(): string { return 'cityBackground'; }
-
-        static getPNG(): string { return require('assets/image/cityBackground.png'); }
-    }
     export class ImageClouds {
         static getName(): string { return 'clouds'; }
 
         static getPNG(): string { return require('assets/image/clouds.png'); }
+    }
+    export class ImageClouds1 {
+        static getName(): string { return 'clouds1'; }
+
+        static getPNG(): string { return require('assets/image/clouds1.png'); }
     }
     export class ImageEvilCat {
         static getName(): string { return 'evilCat'; }
@@ -186,41 +191,6 @@ export namespace Images {
 
         static getPNG(): string { return require('assets/images/controls.png'); }
     }
-    export class ImagesCyberpunkFarEdit {
-        static getName(): string { return 'cyberpunk-far-edit'; }
-
-        static getPNG(): string { return require('assets/images/cyberpunk-far-edit.png'); }
-    }
-    export class ImagesCyberpunkFarEdit2 {
-        static getName(): string { return 'cyberpunk-far-edit2'; }
-
-        static getPNG(): string { return require('assets/images/cyberpunk-far-edit2.png'); }
-    }
-    export class ImagesCyberpunkFarEdit3 {
-        static getName(): string { return 'cyberpunk-far-edit3'; }
-
-        static getPNG(): string { return require('assets/images/cyberpunk-far-edit3.png'); }
-    }
-    export class ImagesCyberpunkFar {
-        static getName(): string { return 'cyberpunk-far'; }
-
-        static getPNG(): string { return require('assets/images/cyberpunk-far.png'); }
-    }
-    export class ImagesCyberpunkForeground {
-        static getName(): string { return 'cyberpunk-foreground'; }
-
-        static getPNG(): string { return require('assets/images/cyberpunk-foreground.png'); }
-    }
-    export class ImagesCyberpunkMid {
-        static getName(): string { return 'cyberpunk-mid'; }
-
-        static getPNG(): string { return require('assets/images/cyberpunk-mid.png'); }
-    }
-    export class ImagesLakeside {
-        static getName(): string { return 'lakeside'; }
-
-        static getPNG(): string { return require('assets/images/lakeside.png'); }
-    }
     export class SpritesheetsCanonbullet {
         static getName(): string { return 'canonbullet'; }
 
@@ -261,25 +231,10 @@ export namespace Images {
 
         static getPNG(): string { return require('assets/spritesheets/instruction.png'); }
     }
-    export class SpritesheetsMetalslugMummy374518 {
-        static getName(): string { return 'metalslug_mummy.[37,45,18,0,0]'; }
-
-        static getPNG(): string { return require('assets/spritesheets/metalslug_mummy.[37,45,18,0,0].png'); }
-    }
     export class SpritesheetsScattererPowerup {
         static getName(): string { return 'scatterer_powerup'; }
 
         static getPNG(): string { return require('assets/spritesheets/scatterer_powerup.png'); }
-    }
-    export class SpritesheetsSkip {
-        static getName(): string { return 'skip'; }
-
-        static getPNG(): string { return require('assets/spritesheets/skip.png'); }
-    }
-    export class SpritesheetsSkip2 {
-        static getName(): string { return 'skip2'; }
-
-        static getPNG(): string { return require('assets/spritesheets/skip2.png'); }
     }
     export class SpritesheetsSmilingship {
         static getName(): string { return 'smilingship'; }
@@ -295,16 +250,6 @@ export namespace Images {
         static getName(): string { return 'startgame2'; }
 
         static getPNG(): string { return require('assets/spritesheets/startgame2.png'); }
-    }
-    export class SpritesheetsTinyShip {
-        static getName(): string { return 'tiny_ship'; }
-
-        static getPNG(): string { return require('assets/spritesheets/tiny_ship.png'); }
-    }
-    export class SpritesheetsTryagain1 {
-        static getName(): string { return 'tryagain1'; }
-
-        static getPNG(): string { return require('assets/spritesheets/tryagain1.png'); }
     }
     export class SpritesheetsTryagain2 {
         static getName(): string { return 'tryagain2'; }

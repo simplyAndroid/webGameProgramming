@@ -7,6 +7,7 @@ import CooldownCircle from './CooldownCircle'
 import Zap from './Zap'
 import PlayerWeaponTypes from '../../globals/WeaponTypes'
 import PlayerBehemothBullet from './bullets/PlayerBehemothBullet'
+import { setTimeout } from 'timers';
 
 enum Direction { Up, Down, Left, Right, UpRight, UpLeft, DownLeft, DownRight, None }
 
@@ -44,7 +45,7 @@ export default class Player extends Phaser.Sprite {
   private preloadMonkeySprite: Phaser.Sprite = null
   private isGrounded = false
 
-  private animStatus = 0 // 0: idle, 1: run, 2: jump
+  private animStatus = 0 // 0: idle, 1: run, 2: jump  
   constructor(game: Phaser.Game) {
     
     //super(game, 100, game.world.centerY, Images.ImageMonkeyIdleIdle1.getName())
@@ -52,12 +53,13 @@ export default class Player extends Phaser.Sprite {
     this.preloadMonkeySprite = this.game.add.sprite(0, 0, Atlases.AtlasesMonkeysheet.getName(), Atlases.AtlasesMonkeysheet.Frames.IdleIdle1)
     this.preloadMonkeySprite.anchor.y = 1.0
     this.addChild(this.preloadMonkeySprite)
-    this.preloadMonkeySprite.animations.add('idle',[ 0, 1, 2], 10, true)
+    /*this.preloadMonkeySprite.animations.add('idle',[ 0, 1, 2], 10, true)
     this.preloadMonkeySprite.animations.add('jump',[3, 4, 5,6, 7, 8, 9],20, true)
+    */
     this.preloadMonkeySprite.animations.add('run',[10, 11, 12, 13, 14, 15, 16], 20, true)
-    this.preloadMonkeySprite.animations.play('idle')
-    game.stage.addChild(this)
-    
+
+    this.initAnimations()
+    game.stage.addChild(this)    
     
     this.commonBulletGroup = new Phaser.Group(game)
     
@@ -77,7 +79,7 @@ export default class Player extends Phaser.Sprite {
 
     game.physics.enable(this, Phaser.Physics.ARCADE)
     this.body.collideWorldBounds = true
-    this.anchor.setTo(0.5, 1.2)
+    this.anchor.setTo(-0.4, 1.2)
  
     this.body.bounce.y = 1;
     this.body.gravity.y = 3000;
@@ -87,17 +89,17 @@ export default class Player extends Phaser.Sprite {
     this.body.jumpType = 0;  
     this.body.drag.setTo(250,0);
 
-
-
     const offsetX: number = 25
+    const offsetY: number = -30
+
     this.regularWeapon = game.add.weapon(-1, Images.SpritesheetsCanonbullet2.getName(), null, this.commonBulletGroup)
     this.regularWeapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
-    this.regularWeapon.bulletSpeed = 1500
-    this.regularWeapon.fireRate = 40
+    this.regularWeapon.bulletSpeed = 500
+    this.regularWeapon.fireRate = 1//40
     this.regularWeapon.fireAngle = 0
-    this.regularWeapon.trackSprite(this, offsetX, 0, false)
+    this.regularWeapon.trackSprite(this, offsetX, offsetY, false)
 
-    this.scatterer = game.add.weapon(-1, Images.SpritesheetsCanonbullet2Single.getName(), null, this.commonBulletGroup)
+    this.scatterer = game.add.weapon(-1, Images.SpritesheetsCanonbullet2.getName(), null, this.commonBulletGroup)
     this.scatterer.multiFire = true
     this.scatterer.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
     this.scatterer.bulletSpeed = 1500
@@ -122,9 +124,6 @@ export default class Player extends Phaser.Sprite {
         GameManager.Instance.setRestartReady(true)
       })
     })
-
-    ///this.cooldownCircle = new CooldownCircle(game, this, 25)
-
     this.timer.start(0)
     game.add.existing(this)
   }
@@ -145,6 +144,18 @@ export default class Player extends Phaser.Sprite {
     return this.invulnerable
   }
 
+  public initAnimations(){
+    if(GameManager.Instance.currentLevelNum == 3){
+      this.preloadMonkeySprite.animations.add('idle',[10, 11, 12, 13, 14, 15, 16], 20, true)
+      this.preloadMonkeySprite.animations.add('jump',[10, 11, 12, 13, 14, 15, 16], 20, true)
+      this.preloadMonkeySprite.animations.play('run')
+    }
+    else{ 
+      this.preloadMonkeySprite.animations.add('idle',[ 0, 1, 2], 10, true)
+      this.preloadMonkeySprite.animations.add('jump',[3, 4, 5,6, 7, 8, 9],20, true)
+      this.preloadMonkeySprite.animations.play('idle')
+    }
+  }
   public update(): void {
     ///this.cooldownCircle.updatePos(this.body.position)
     ///this.cooldownCircle.setPercentage(this.getDodgeCooldownTimePercent())
@@ -174,7 +185,11 @@ export default class Player extends Phaser.Sprite {
     }
 
     if (shootKeys[0].isDown || shootKeys[1].isDown) {
-      ///this.handleFire()
+      if (GameManager.Instance.currentLevelNum == 3){    
+  
+          this.handleFire()
+
+      } 
     }
 
     this.currentMovingDirection = Direction.None
@@ -210,8 +225,7 @@ export default class Player extends Phaser.Sprite {
    * @returns {number} The new velocity
    */
   private accelerate(velocity: number, positiveDir: boolean): number {
-    const step = 500
-
+    let step = 500
     if (this.TOP_SPEED % step !== 0) {
       console.error('Player speed is not a multiple of move step')
     }
@@ -277,7 +291,9 @@ export default class Player extends Phaser.Sprite {
     if (moveUpKey.isDown) {      
       if (moveLeftKey.isDown){
         this.runAnim('jump')
-        this.scale.x = -1 
+        if( GameManager.Instance.currentLevelNum < 3){
+          this.scale.x = -1
+        }
         this.currentMovingDirection = Direction.UpLeft        
       }
       else if (moveRightKey.isDown){
@@ -294,7 +310,9 @@ export default class Player extends Phaser.Sprite {
 //// Down + Left- Right
     else if (moveDownKey.isDown) {
       if (moveLeftKey.isDown){
-        this.scale.x = -1
+        if( GameManager.Instance.currentLevelNum < 3){
+          this.scale.x = -1
+        }
         this.currentMovingDirection = Direction.DownLeft
         if(this.isGrounded){
           this.runAnim('run')
@@ -317,7 +335,9 @@ export default class Player extends Phaser.Sprite {
     
 //// Left +Up- Down
     else if (moveLeftKey.isDown) {
-      this.scale.x = -1
+      if( GameManager.Instance.currentLevelNum < 3){
+        this.scale.x = -1
+      }
       if (moveUpKey.isDown){ 
         this.isGrounded = false       
         this.currentMovingDirection = Direction.UpLeft

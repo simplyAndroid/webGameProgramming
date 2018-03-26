@@ -9,11 +9,11 @@ import { triggerId } from 'async_hooks';
 
 import {randomYPos, randomXPos} from '../../utils/gamehelpers'
 import { Sprite } from 'phaser-ce';
-export default class LevelOne extends Phaser.State {
-  
+
+export default class LevelThree extends Phaser.State {
+  readonly BROKEN_CNT = 40
   readonly FEEDS_CNT = 50
-  readonly TIME_LMT = 50
-  readonly TILE_CNT = 5
+  readonly TIME_LMT = 90
   private intervalFunc = null
   private gameResult = 'ready'//'success', 'failed'
   
@@ -35,30 +35,71 @@ export default class LevelOne extends Phaser.State {
   private currentWaveNumber: number
 
   private tileBoards: Phaser.Sprite[] = []
-  private imgTile: any =[ Images.ImageIsland1, Images.ImageIsland2, Images.ImageIsland3 , Images.ImageIsland2, Images.ImageIsland3 ]
+  private imgTile: any =[ Images.ImageIsland1, Images.ImageIsland2, Images.ImageIsland3 ]
   private countTick: number = 0
 
   private feeds: Phaser.Sprite[] = []
   private feed: Phaser.Sprite
+
+  private brokens: Phaser.Sprite[] = []
+  private broken: Phaser.Sprite
+
   private eatFeed: number = 0
   public counterTime: Phaser.Text
-
+ 
   constructor() {
     super()
     this.gameAdapter = new GameAdapter()
-    GameManager.Instance.currentLevelNum = 1
+    GameManager.Instance.currentLevelNum = 2
   }
+  /////////////////Put broken feed//////
+  private checkPossiblePos(){
+    for(var i =0; i<3; i++){ 
+      this.game.physics.arcade.overlap(this.broken, this.tileBoards[i],() =>{
 
-  private checkHardPosition(){
-    for(var i =0; i< this.TILE_CNT; i++){ 
-      this.game.physics.arcade.overlap(this.feed, this.tileBoards[i],() =>{
-        this.feed.scale.x = -1
-        this.feed.position.y = this.game.height/10        
+        this.broken.position.y = this.game.height/7 
+        this.broken.scale.x = -1       
       })
     }
-    this.game.physics.arcade.overlap(this.feed, this.bgFront,() =>{     
-      this.feed.position.y = this.game.height/10  
-      this.feed.scale.y = -1      
+    this.game.physics.arcade.overlap(this.broken, this.bgFront,() =>{
+       this.broken.position.y = this.game.height/6  
+      //this.feed.scale.y = -1      
+    })
+    for(var i =0; i < this.FEEDS_CNT ; i++){ 
+      this.game.physics.arcade.overlap(this.broken, this.feeds[i],() =>{        
+        this.broken.position.x = this.game.width/3 
+        this.broken.scale.x = -1       
+      })
+    }
+
+  }
+  private createBroken(){
+    for(var i =0; i<this.BROKEN_CNT; i++){   
+      this.broken =  this.game.add.sprite(randomXPos(this.game.width), randomYPos(this.game.height), Images.ImageBroken.getName())
+      this.game.physics.arcade.enable(this.broken)
+      this.broken.body.collideWorldBounds = true      
+      this.broken.body.immovable = true      
+      this.checkPossiblePos()
+      this.broken.body.allowGravity = false
+      if(i % 2){
+        this.broken.scale.y = -1
+      }
+      this.brokens[i] = this.broken      
+    }
+  }
+  ///////////////////////////// Putting Feed ////////////////// 
+  private checkHardPosition(){
+    for(var i =0; i<3; i++){ 
+      this.game.physics.arcade.overlap(this.feed, this.tileBoards[i],() =>{
+        
+        this.feed.position.y = this.game.height/7 
+        this.feed.scale.x = -1       
+      })
+    }
+    this.game.physics.arcade.overlap(this.feed, this.bgFront,() =>{
+      //console.log('Floor--2')      
+      this.feed.position.y = this.game.height/6  
+      //this.feed.scale.y = -1      
     })   
   }
   private createFeeds(): void {
@@ -69,6 +110,9 @@ export default class LevelOne extends Phaser.State {
       this.feed.body.immovable = true      
       this.checkHardPosition()
       this.feed.body.allowGravity = false
+      if(i % 3){
+        this.feed.scale.y = -1
+      }
       this.feeds[i] = this.feed      
     }
   }
@@ -77,18 +121,22 @@ export default class LevelOne extends Phaser.State {
     
   }
   public create(): void {
+    //console.log('Level One')
     this.resetScore()
     GameManager.Instance.levelStartLogic(this.game)
     this.game.physics.enable(this, Phaser.Physics.ARCADE)
    
     this.restartKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
     this.willUpdateWave = false
+    
+    this.enemyFactory = new EnemyFactory(this.game)
+    
     this.game.stage.backgroundColor = '#071924'
     this.timer = this.game.time.create(false)
     this.timer.start()
 
     const backImg = Images.ImageSky.getName()
-    const midImg = Images.ImageClouds1.getName()
+    const midImg = Images.ImageClouds.getName()
     const frontImg = Images.ImageIsland1.getName()
 
     this.bgBack = this.game.add.tileSprite(0,
@@ -109,10 +157,9 @@ export default class LevelOne extends Phaser.State {
     this.player = new Player(this.game)
     GameManager.Instance.setPlayerInstance(this.player)
     this.powerUpFactory = new PowerUpFactory(this.game, this.player)
-
     this.game.camera.follow(this.player);
     this.player.initAnimations()
-    
+
     this.bgFront = this.game.add.tileSprite(0,
       this.game.height - this.game.cache.getImage(frontImg).height,
       this.game.width,
@@ -123,42 +170,22 @@ export default class LevelOne extends Phaser.State {
     this.bgFront.body.collideWorldBounds = true
     this.bgFront.body.immovable = true
     this.bgFront.body.allowGravity = false
-    
-    const pos = [{x:16,y:130}, {x:254,y:300}, {x:487,y:200} , {x:420,y:320} , {x:600,y:150}]
-    for(var i =0; i< this.TILE_CNT ; i++){   
-      this.tileBoards[i] = this.game.add.sprite(pos[i].x, pos[i].y, this.imgTile[i].getName())
-      this.game.physics.arcade.enable(this.tileBoards[i])
-      this.tileBoards[i].body.collideWorldBounds = true
-      this.tileBoards[i].body.allowGravity = false
-      this.tileBoards[i].body.immovable = true
-     
-    }
-    
+   
 
     this.createFeeds()
-   
-    this.intervalFunc = setInterval(() => {  
-      GameManager.Instance.scoreValue = this.eatFeed * 10    
-      this.initTimer(this.game, this.countTick, this.TIME_LMT)
-      this.countTick ++
-      if(this.countTick == this.TIME_LMT){
-        this.goNext()
-        this.countTick = 0
-        clearInterval(this.intervalFunc)
-      }
-    },1000)
+ 
+
+    this.gameAdapter.initHealthBar(this.game)
+    this.gameAdapter.displayControls(this.game)
     this.enemiesGroup = this.game.add.group()
+
+    // Spawn first wave
+    this.enemiesGroup.addMultiple(getLevelOneEnemyWave(1, this.enemyFactory))
+    
     this.currentWaveNumber = 1
     console.log(`Wave ${this.currentWaveNumber}`)
   }
   public goNext(): void {
-    GameManager.Instance.scoreValue = this.eatFeed * 10
-    this.initTimer(this.game, this.countTick, this.TIME_LMT)
-
-    if(this.intervalFunc){
-      this.countTick = 0
-      clearInterval(this.intervalFunc)
-    }
     if(this.gameResult == 'success'){
       this.game.state.start('win')
     }
@@ -166,24 +193,27 @@ export default class LevelOne extends Phaser.State {
       this.game.state.start('Gameover')
     }    
   }
-
-  public update(): void {
+  public showBananaPoints(): void {
     
-    for(var i = 0; i< this.TILE_CNT;i++){
-      this.game.physics.arcade.collide(this.tileBoards[i], this.player, () => {
-        this.player.setIsGround(true)
-      });
+    if(this.counterTime && this.counterTime.alive){
+      this.counterTime.destroy()
     }
+    const text: string = `Score: ${GameManager.Instance.scoreValue + this.eatFeed * 10}`
+
+   this.counterTime = new Phaser.Text(this.game, 320, 20, text, { font: '18px Anonymous Pro', fontStyle: 'bold', fill: '#fff', align: 'left' })
+    this.game.add.existing(this.counterTime)
+  }
+  public update(): void {
     for(var i = 0; i< this.FEEDS_CNT;i++){
       if(this.feeds[i]){
         this.game.physics.arcade.collide(this.feeds[i], this.player, () => {
           this.feeds[i].destroy()
-          this.feeds[i] = null
-          
+          this.feeds[i] = null          
           this.eatFeed ++
-          
+          this.showBananaPoints()
           if(this.eatFeed == this.FEEDS_CNT){
             this.gameResult = 'success'
+            GameManager.Instance.scoreValue += this.FEEDS_CNT * 10 
             this.goNext()
           }
           else {
@@ -194,6 +224,7 @@ export default class LevelOne extends Phaser.State {
     }
    
     this.game.physics.arcade.collide(this.bgFront, this.player, () => {
+      //console.log('Collision')
       this.player.setIsGround(true)
     });
 
@@ -202,37 +233,33 @@ export default class LevelOne extends Phaser.State {
     this.gameAdapter.checkCollisions(this.game, this.player, this.enemiesGroup)
 
     GameManager.Instance.updateFiltersTime(this.game.time.totalElapsedSeconds() * 1000)
-
+   
     this.bgBack.tilePosition.x -= this.farTilesSpeed
     this.bgMid.tilePosition.x -= this.midTilesSpeed
-    //this.bgFront.tilePosition.x -= this.frontTilesSpeed
-    
+    this.bgFront.tilePosition.x -= this.frontTilesSpeed
+
     if (!this.player.alive) {
       if (GameManager.Instance.getRestartKeyReady() && this.restartKey.isDown) {
-        this.game.state.start('levelone')
+        this.game.state.start('levelthree')
       }
     }
   }
-  public initTimer(game: Phaser.Game, v: number, limit_v: number): void {
-    
-    if(this.counterTime && this.counterTime.alive){
-      this.counterTime.destroy()
-    }
-    const text: string = `Time Left: ${(limit_v-v)} S  Score: ${GameManager.Instance.scoreValue}`
-   this.counterTime = new Phaser.Text(game, 20, 20, text, { font: '18px Anonymous Pro', fontStyle: 'bold', fill: '#fff', align: 'left' })
-    game.add.existing(this.counterTime)
-  }
+  
 
   private checkWavePassed(): void {
     if (!this.willUpdateWave && this.gameAdapter.enemyGroupDead(this.enemiesGroup)) {
       this.willUpdateWave = true
 
       this.timer.add(this.WAVE_DELAY, () => {
-
+        this.updateWave()
       })
     }
   }
 
+  /**
+   * Check if current enemies wave is all dead
+   * and if so, add the next until none are left
+   */
   private updateWave(): void {
     this.willUpdateWave = false // reset state for coming loops
     this.currentWaveNumber = this.currentWaveNumber + 1
@@ -242,6 +269,31 @@ export default class LevelOne extends Phaser.State {
     this.midTilesSpeed += 0.1
     this.frontTilesSpeed += 0.3
 
+    const wave = getLevelOneEnemyWave(this.currentWaveNumber, this.enemyFactory)
+    
+    if (wave.length > 0) {
+      console.log(`Wave ${this.currentWaveNumber}`)
+      this.gameAdapter.displayWaveInfo(this.game, this.currentWaveNumber)
+      this.enemiesGroup.addMultiple(wave)
+
+      // Spawn powerUp possibility
+      const poll: number = Math.random()
+      if (poll <= 0.35) {
+        const poll2: number = Math.random()
+        const timer = this.game.time.create(true)
+        timer.start()
+
+        if (poll2 > 0.5)
+          timer.add(750, () => this.powerUpFactory.spawnScatterer())
+        else
+          timer.add(750, () => this.powerUpFactory.spawnBehemoth())
+      }
+
+    } else {
+      // No more enemies
+      this.goNext()
+    }
+    
   }
 
 }

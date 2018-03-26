@@ -18,8 +18,8 @@ export default class GameManager {
   public waveSpritesTween: Phaser.Tween
 
   
-  public scoreValue: number
-  public currentLevelNum: number
+  public scoreValue: number = 0
+  public currentLevelNum: number = 0
   readonly RESTART_KEY_DELAY: number = 1000
 
   constructor() {

@@ -9,6 +9,7 @@ import Preloader from './states/preloader'
 import Title from './states/title'
 import LevelOne from './states/levels/levelone'
 import LevelTwo from './states/levels/leveltwo'
+import LevelThree from './states/levels/levelthree'
 import Intro from './states/levels/intro'
 import * as Utils from './utils/utils'
 import * as Assets from './assets'
@@ -29,6 +30,7 @@ class App extends Phaser.Game {
         this.state.add('Gameover',Gameover)
         this.state.add('levelone', LevelOne)
         this.state.add('leveltwo', LevelTwo)
+        this.state.add('levelthree', LevelThree)
         this.state.start('boot')
     }
 }

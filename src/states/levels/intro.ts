@@ -40,8 +40,8 @@ export default class Intro extends Phaser.State {
       4: Images.ImagesAva1Happy.getName(),
       5: Images.ImagesAva1Glasses.getName()
     }
-    const backImg = Images.ImagesCyberpunkFarEdit3.getName()
-    const midImg = Images.ImagesCyberpunkMid.getName()
+    const backImg = Images.ImageJungleBackground.getName()
+    const midImg = Images.ImageJungleBackground.getName()
 
     this.bgBack = this.game.add.tileSprite(0,
       this.game.height - this.game.cache.getImage(backImg).height,
@@ -57,7 +57,7 @@ export default class Intro extends Phaser.State {
       midImg
     )
 
-    this.game.add.button(this.game.world.width - 150, this.game.world.height - 85, Images.SpritesheetsSkip2.getName(), this.goNext, this, 2, 1, 0)
+    this.game.add.button(this.game.world.width - 150, this.game.world.height - 85, Images.SpritesheetsStartgame1.getName(), this.goNext, this, 2, 1, 0)
     this.skipKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
 
     this.textObject = this.game.add.text(140, 32, '', { font: '13px Anonymous Pro', fill: '#58e1cf' })
@@ -100,7 +100,7 @@ export default class Intro extends Phaser.State {
   }
 
   private setDisplayCharacter(lineIdx: number): void {
-    this.characterHead.loadTexture(this.textEmotions[lineIdx])
+    this.characterHead.loadTexture(this.textEmotions[lineIdx])//pru
   }
 
   private countdownToStart(): void {

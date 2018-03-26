@@ -13,7 +13,7 @@ export default class Title extends Phaser.State {
 
   public create(): void {
     this.game.stage.backgroundColor = '#071924'
-    const bgImg = Assets.Images.ImagesCyberpunkFarEdit3.getName()
+    const bgImg = Assets.Images.ImageJungleBackground.getName()
     this.backgroundTemplateSprite = this.game.add.tileSprite(0,
       this.game.height - this.game.cache.getImage(bgImg).height,
       this.game.width,
@@ -61,9 +61,9 @@ export default class Title extends Phaser.State {
       this.sfxAudiosprite.play(Phaser.ArrayUtils.getRandomItem(this.sfxLaserSounds))
     });
 
-    this.game.add.button(this.game.world.centerX - 100, this.game.world.centerY - 180, Assets.Images.SpritesheetsStartgame2.getName(), this.goNext, this, 2, 1, 0)
-    this.game.add.button(this.game.world.centerX - 100, this.game.world.centerY - 40, Assets.Images.SpritesheetsInstruction.getName(), this.goInstruction, this, 2, 1, 0)
-    this.game.add.button(this.game.world.centerX - 100, this.game.world.centerY + 100, Assets.Images.SpritesheetsCredit.getName(), this.goCredit, this, 2, 1, 0)
+    this.game.add.button(this.game.world.centerX, this.game.world.centerY - 80, Assets.Images.SpritesheetsStartgame2.getName(), this.goNext, this, 2, 1, 0)
+    this.game.add.button(this.game.world.centerX, this.game.world.centerY - 0, Assets.Images.SpritesheetsInstruction.getName(), this.goInstruction, this, 2, 1, 0)
+    this.game.add.button(this.game.world.centerX, this.game.world.centerY + 80, Assets.Images.SpritesheetsCredit.getName(), this.goCredit, this, 2, 1, 0)
     this.game.camera.flash(0x000000, 1000)
   }
 
@@ -75,7 +75,7 @@ export default class Title extends Phaser.State {
 
   private goNext(): void {
     GameManager.Instance.currentLevelNum = 1 
-    this.game.state.start('levelone')
+    this.game.state.start('levelone')//('leveltwo')//('levelthree')//('levelone')
     //this.game.state.start('intro')
   }
   private goInstruction(): void {
