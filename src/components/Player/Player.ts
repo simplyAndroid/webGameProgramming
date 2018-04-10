@@ -12,7 +12,7 @@ import { setTimeout } from 'timers';
 enum Direction { Up, Down, Left, Right, UpRight, UpLeft, DownLeft, DownRight, None }
 
 export default class Player extends Phaser.Sprite {
-  readonly TOP_SPEED: number = 500
+  readonly TOP_SPEED: number = 500 ///////chnage to 1000, then game will be easy than now
 
   private regularWeapon: Phaser.Weapon
   private scatterer: Phaser.Weapon
@@ -164,13 +164,14 @@ export default class Player extends Phaser.Sprite {
     let { velocity } = this.body
     const { moveUpKey, moveDownKey, moveLeftKey, moveRightKey, shootKeys, regularWeapon } = this
 
-    if (moveUpKey.isDown) {      
-      this.body.velocity.y = this.accelerate(velocity.y, false)
-    } else if (moveDownKey.isDown) {
-      this.body.velocity.y = this.accelerate(velocity.y, true)
-    } else {
-      this.body.velocity.y = this.deAccelerate(velocity.y)
-    }
+      if (moveUpKey.isDown) {      
+        this.body.velocity.y = this.accelerate(velocity.y, false)
+      } else if (moveDownKey.isDown) {
+        this.body.velocity.y = this.accelerate(velocity.y, true)
+      } else {
+        this.body.velocity.y = this.deAccelerate(velocity.y)
+      }
+
 
     if (moveLeftKey.isDown) {
       this.body.velocity.x = this.accelerate(velocity.x, false)
@@ -226,6 +227,9 @@ export default class Player extends Phaser.Sprite {
    */
   private accelerate(velocity: number, positiveDir: boolean): number {
     let step = 500
+    if(this.isGrounded == false){
+      step = 1
+    }
     if (this.TOP_SPEED % step !== 0) {
       console.error('Player speed is not a multiple of move step')
     }
@@ -235,8 +239,8 @@ export default class Player extends Phaser.Sprite {
     }
 
     if (positiveDir) {
-      velocity += step
-      return velocity >= this.TOP_SPEED ? this.TOP_SPEED : velocity
+        velocity += step
+        return velocity >= this.TOP_SPEED ? this.TOP_SPEED : velocity
     } else {
       velocity -= step
       return velocity <= -this.TOP_SPEED ? -this.TOP_SPEED : velocity

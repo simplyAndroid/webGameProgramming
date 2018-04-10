@@ -341,6 +341,26 @@ export namespace Audio {
         static getMP3(): string { return require('assets/audio/music.mp3'); }
         static getOGG(): string { return require('assets/audio/music.ogg'); }
     }
+    export class SoundBackground {
+        static getName(): string { return 'background'; }
+
+        static getWAV(): string { return require('assets/sound/background.wav'); }
+    }
+    export class SoundEat {
+        static getName(): string { return 'eat'; }
+
+        static getWAV(): string { return require('assets/sound/eat.wav'); }
+    }
+    export class SoundLevelFailed {
+        static getName(): string { return 'level failed'; }
+
+        static getMP3(): string { return require('assets/sound/level failed.mp3'); }
+    }
+    export class SoundLevelSuccess {
+        static getName(): string { return 'level success'; }
+
+        static getWAV(): string { return require('assets/sound/level success.wav'); }
+    }
 }
 
 export namespace Audiosprites {

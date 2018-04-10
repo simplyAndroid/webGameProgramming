@@ -1,4 +1,4 @@
-import {Images} from '../../assets'
+import {Images, Audio} from '../../assets'
 import Player from '../../components/Player/Player'
 import GameAdapter from '../../globals/GameAdapter'
 import GameManager from '../../globals/GameManager'
@@ -8,12 +8,12 @@ import PowerUpFactory from '../../components/PowerUp/PowerUpFactory'
 import { triggerId } from 'async_hooks';
 
 import {randomYPos, randomXPos} from '../../utils/gamehelpers'
-import { Sprite } from 'phaser-ce';
+import { Sprite, Sound, AudioSprite, Image } from 'phaser-ce';
 export default class LevelOne extends Phaser.State {
   
   readonly FEEDS_CNT = 50
   readonly TIME_LMT = 50
-  readonly TILE_CNT = 5
+  readonly TILE_CNT = 6
   private intervalFunc = null
   private gameResult = 'ready'//'success', 'failed'
   
@@ -35,7 +35,7 @@ export default class LevelOne extends Phaser.State {
   private currentWaveNumber: number
 
   private tileBoards: Phaser.Sprite[] = []
-  private imgTile: any =[ Images.ImageIsland1, Images.ImageIsland2, Images.ImageIsland3 , Images.ImageIsland2, Images.ImageIsland3 ]
+  private imgTile: any =[ Images.ImageIsland3, Images.ImageIsland1, Images.ImageIsland2, Images.ImageIsland3 , Images.ImageIsland2, Images.ImageIsland3 ]
   private countTick: number = 0
 
   private feeds: Phaser.Sprite[] = []
@@ -81,6 +81,9 @@ export default class LevelOne extends Phaser.State {
     GameManager.Instance.levelStartLogic(this.game)
     this.game.physics.enable(this, Phaser.Physics.ARCADE)
    
+    this.game.sound.add(Audio.SoundBackground.getName())
+    this.game.sound.play(Audio.SoundBackground.getName(), 1, true)
+    
     this.restartKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
     this.willUpdateWave = false
     this.game.stage.backgroundColor = '#071924'
@@ -124,7 +127,7 @@ export default class LevelOne extends Phaser.State {
     this.bgFront.body.immovable = true
     this.bgFront.body.allowGravity = false
     
-    const pos = [{x:16,y:130}, {x:254,y:300}, {x:487,y:200} , {x:420,y:320} , {x:600,y:150}]
+    const pos = [{x:25,y:370}, {x:16,y:130}, {x:254,y:300}, {x:487,y:200} , {x:420,y:320} , {x:600,y:150}]
     for(var i =0; i< this.TILE_CNT ; i++){   
       this.tileBoards[i] = this.game.add.sprite(pos[i].x, pos[i].y, this.imgTile[i].getName())
       this.game.physics.arcade.enable(this.tileBoards[i])
@@ -160,15 +163,21 @@ export default class LevelOne extends Phaser.State {
       clearInterval(this.intervalFunc)
     }
     if(this.gameResult == 'success'){
+      this.game.sound.stopAll()
+      this.game.sound.add(Audio.SoundLevelSuccess.getName())
+      this.game.sound.play(Audio.SoundLevelSuccess.getName())
       this.game.state.start('win')
     }
     else{
+      this.game.sound.stopAll()
+      this.game.sound.add(Audio.SoundLevelFailed.getName())
+      this.game.sound.play(Audio.SoundLevelFailed.getName())
       this.game.state.start('Gameover')
     }    
   }
 
   public update(): void {
-    
+    this.player.setIsGround(false)
     for(var i = 0; i< this.TILE_CNT;i++){
       this.game.physics.arcade.collide(this.tileBoards[i], this.player, () => {
         this.player.setIsGround(true)

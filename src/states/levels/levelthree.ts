@@ -1,4 +1,4 @@
-import {Images} from '../../assets'
+import {Images, Audio} from '../../assets'
 import Player from '../../components/Player/Player'
 import GameAdapter from '../../globals/GameAdapter'
 import GameManager from '../../globals/GameManager'
@@ -125,6 +125,9 @@ export default class LevelThree extends Phaser.State {
     this.resetScore()
     GameManager.Instance.levelStartLogic(this.game)
     this.game.physics.enable(this, Phaser.Physics.ARCADE)
+
+    this.game.sound.add(Audio.SoundBackground.getName())
+    this.game.sound.play(Audio.SoundBackground.getName(), 1, true)
    
     this.restartKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
     this.willUpdateWave = false
@@ -188,9 +191,15 @@ export default class LevelThree extends Phaser.State {
   public goNext(): void {
     if(this.gameResult == 'success'){
       this.game.state.start('win')
+      this.game.sound.stopAll()
+      this.game.sound.add(Audio.SoundLevelSuccess.getName())
+      this.game.sound.play(Audio.SoundLevelSuccess.getName())
     }
     else{
       this.game.state.start('Gameover')
+      this.game.sound.stopAll()
+      this.game.sound.add(Audio.SoundLevelFailed.getName())
+      this.game.sound.play(Audio.SoundLevelFailed.getName())
     }    
   }
   public showBananaPoints(): void {
@@ -204,6 +213,7 @@ export default class LevelThree extends Phaser.State {
     this.game.add.existing(this.counterTime)
   }
   public update(): void {
+    //this.player.setIsGround(false)
     for(var i = 0; i< this.FEEDS_CNT;i++){
       if(this.feeds[i]){
         this.game.physics.arcade.collide(this.feeds[i], this.player, () => {

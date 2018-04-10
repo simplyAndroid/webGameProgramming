@@ -1,4 +1,4 @@
-import {Images} from '../../assets'
+import {Images, Audio} from '../../assets'
 import Player from '../../components/Player/Player'
 import GameAdapter from '../../globals/GameAdapter'
 import GameManager from '../../globals/GameManager'
@@ -128,6 +128,9 @@ export default class LevelTwo extends Phaser.State {
     GameManager.Instance.levelStartLogic(this.game)
     this.game.physics.enable(this, Phaser.Physics.ARCADE)
    
+    this.game.sound.add(Audio.SoundBackground.getName())
+    this.game.sound.play(Audio.SoundBackground.getName(), 1, true)
+
     this.restartKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
     this.willUpdateWave = false
     this.game.stage.backgroundColor = '#071924'
@@ -216,13 +219,20 @@ export default class LevelTwo extends Phaser.State {
 
     if(this.gameResult == 'success'){
       this.game.state.start('win')
+      this.game.sound.stopAll()
+      this.game.sound.add(Audio.SoundLevelSuccess.getName())
+      this.game.sound.play(Audio.SoundLevelSuccess.getName())
     }
     else{
       this.game.state.start('Gameover')
+      this.game.sound.stopAll()
+      this.game.sound.add(Audio.SoundLevelFailed.getName())
+      this.game.sound.play(Audio.SoundLevelFailed.getName())
     }    
   }
 
   public update(): void {
+    this.player.setIsGround(false)
     this.bgMid.tilePosition.x -= this.midTilesSpeed
     this.bgBack.tilePosition.x -= this.farTilesSpeed
     for(var i = 0; i<3;i++){
@@ -240,6 +250,10 @@ export default class LevelTwo extends Phaser.State {
           this.brokens[i].destroy()
           this.gameResult = 'failed'
           this.game.state.start('Gameover')
+          
+          this.game.sound.stopAll()
+          this.game.sound.add(Audio.SoundLevelFailed.getName())
+          this.game.sound.play(Audio.SoundLevelFailed.getName())
         });
       }
     }
